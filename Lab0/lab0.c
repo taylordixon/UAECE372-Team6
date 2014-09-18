@@ -192,11 +192,55 @@ int main(void)
 	//           significant code size (6KB-10KB).
 	printf("\n\n\rNi Hao!\n\r");
 
+	// Print a message requesting the user to select a LED to toggle.
+	printf("Select LED to Toggle (4-7): ");
 
 	// The main loop for your microcontroller should not exit (return), as
 	// the program should run as long as the device is powered on.
 	while(1)
 	{
+
+            // **TODO** Modified the main loop of the software application such that
+		// whenever the SW1 is continuously pressed, the currently selected LED
+		// will blink twice as fast. When SW1 is released the LEDs will blink at
+		// the initially defined rate.
+
+
+		// Use the UART RX interrupt flag to wait until we recieve a character.
+		if(IFS0bits.U1RXIF == 1) {
+
+			// U1RXREG stores the last character received by the UART. Read this
+			// value into a local variable before processing.
+			receivedChar = U1RXREG;
+
+			// Echo the entered character so the user knows what they typed.
+			printf("%c\n\r", receivedChar);
+
+			// Check to see if the character value is between '4' and '7'. Be sure sure
+			// use single quotation mark as the character '4' is not the same as the
+			// number 4.
+			if( receivedChar <= '7' && receivedChar >= '4' ) {
+				// Assign ledToToggle to the number corresponding to the number
+				// entered. We can do this by subtracting the value for
+				// the character '0'.
+				ledToToggle = receivedChar - '0';
+
+				// Print a confirmation message.
+				printf("Toggling LED%d\n\r", ledToToggle);
+			}
+			else {
+				// Display error message.
+				printf("Invalid LED Selection!\n\r");
+			}
+
+			// Clear the UART RX interrupt flag to we can detect the reception
+			// of another character.
+			IFS0bits.U1RXIF = 0;
+
+			// Re-print the message requesting the user to select a LED to toggle.
+			printf("Select LED to Toggle (4-7): ");
+		}
+
 		// Modified the main loop of the software application such that
 		// whenever the SW1 is continuously pressed, the currently selected LED
 		// will blink twice as fast. When SW1 is released the LEDs will bli// the initially defined rate.
@@ -254,7 +298,8 @@ void _ISR _T1Interrupt(void)
 	IFS0bits.T1IF = 0;
 	
 	// Toggle the LED.
-        LATBbits.LATB12 = ~LATBbits.LATB12;
+        //LATBbits.LATB12 = ~LATBbits.LATB12;
+        LATB ^= ((0x1000)<<(7-ledToToggle));
 
 }
 
