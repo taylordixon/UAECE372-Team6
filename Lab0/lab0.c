@@ -110,11 +110,15 @@ int main(void)
 	// **TODO** SW1 of the 16-bit 28-pin Starter Board is connected to pin RB??.
 	// Assign the TRISB bit for this pin to configure this port as an input.
 
+
+        //added
         TRISBbits.TRISB5 = 1;
 
 	// Clear Timer value (i.e. current tiemr value) to 0
 	TMR1 = 0;
 
+
+        //added
         LATBbits.LATB12 = 1;
         LATBbits.LATB13 = 1;
         LATBbits.LATB14 = 1;
@@ -186,7 +190,8 @@ int main(void)
 	//           c.) Entering the size of heap, e.g. 512, under Heap Size
 	//        2. printf function is advanced and using printf may require
 	//           significant code size (6KB-10KB).
-	printf("\n\n\rhola!\n\r");
+	printf("\n\n\rNi Hao!\n\r");
+
 
 	// The main loop for your microcontroller should not exit (return), as
 	// the program should run as long as the device is powered on.
@@ -197,6 +202,8 @@ int main(void)
 		// will blink twice as fast. When SW1 is released the LEDs will bli// the initially defined rate.
             switch(state){
                 case 0:
+                    // If timer is not reset may be greater than 14400/2 when the PR1 register is changed to that
+                    // number. Also will not blink at the correct speed at the moment the button is pressed/released.
                     TMR1 = 0;
                     if (PORTBbits.RB5 == 0){
                         state = 2;
