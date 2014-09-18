@@ -106,6 +106,7 @@ int main(void)
 	TRISBbits.TRISB12 = 0;
 
 
+        
 
 	// **TODO** SW1 of the 16-bit 28-pin Starter Board is connected to pin RB??.
 	// Assign the TRISB bit for this pin to configure this port as an input.
@@ -118,11 +119,7 @@ int main(void)
 	TMR1 = 0;
 
 
-        //added
-        LATBbits.LATB12 = 1;
-        LATBbits.LATB13 = 1;
-        LATBbits.LATB14 = 1;
-        LATBbits.LATB15 = 1;
+        
 
 	// Set Timer 1's period value regsiter to value for 250ms. Please note
 	// T1CON's register settings below (internal Fosc/2 and 1:256 prescalar).
@@ -208,6 +205,11 @@ int main(void)
 
 		// Use the UART RX interrupt flag to wait until we recieve a character.
 		if(IFS0bits.U1RXIF == 1) {
+
+                        LATBbits.LATB12 = 1;
+                        LATBbits.LATB13 = 1;
+                        LATBbits.LATB14 = 1;
+                        LATBbits.LATB15 = 1;
 
 			// U1RXREG stores the last character received by the UART. Read this
 			// value into a local variable before processing.
@@ -299,8 +301,10 @@ void _ISR _T1Interrupt(void)
 	
 	// Toggle the LED.
         //LATBbits.LATB12 = ~LATBbits.LATB12;
+        
         LATB ^= ((0x1000)<<(7-ledToToggle));
-
+        //added
+        
 }
 
 // ******************************************************************************************* //
